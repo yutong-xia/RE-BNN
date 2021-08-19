@@ -1,5 +1,6 @@
-# RE-BNN
-TensorFlow code for our paper.
+# A Random Effect Bayesian Neural Network (RE-BNN) for Choice Analysis: Predicting and Interpreting Travel Mode Choice Across Multiple Regions
+
+TensorFlow code for my master dissertation at CASA, UCL.
 
 
 ______________________________________________________________________________________________________________________________________________________________
