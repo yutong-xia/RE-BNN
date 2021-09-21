@@ -12,7 +12,7 @@ def get_region():
     return region_name
 
 def get_modes():
-    travel_mode = ['Walk','Bicycle','Car or van','Bus','Rail']
+    travel_mode = ['Walk','Bicycle','Driving','Bus','Rail']
     return travel_mode
 
 years_str=get_years()
@@ -120,45 +120,17 @@ def Mode_in_Region_Plot_Stand(qb_r_standard_50,num_model=50,year='2016'):
     plt.tight_layout()
 
 
-def Mode_in_Region_Plot_Nonstand(result_para_rebnn_50,num_model=50,year='2016',add_b=False):
-    '''
-    This function is used to plot the parameters of the random effect (non-standardised) of each alternative in different regions
-    '''
-    region_name = ['North\nEast', 'North\nWest', 'Yorkshire &\nthe Humber'
-        , 'East\nMidlands', 'West\nMidlands', 'East of\nEngland', 'London', 'South\nEast', 'South\nWest']
-    qb_array = np.zeros((len(travel_mode), num_model, len(region_name)))
-    year = year
-    for mode in range(len(travel_mode)):
-        for _ in range(30):
-            if add_b==True:
-                qb_array[mode][_] = result_para_rebnn_50[_][year][4].T[mode] + result_para_rebnn_50[_][year][3][mode]
-            else:
-                qb_array[mode][_] = result_para_rebnn_50[_][year][4].T[mode]
-
-    fig = plt.figure(dpi=300, figsize=(12, 10))
-    seq = ['a', 'b', 'c', 'd', 'e']
-    for mode in range(len(travel_mode)):
-        fig.add_subplot(3, 2, mode + 1)
-        plt.boxplot(list(qb_array[mode].T))
-        plt.xlim(xmax=9.5,xmin=0.5)
-        plt.xticks([y + 1 for y in range(len(region_name))],
-                 region_name,rotation=0, fontsize=8)
-        plt.xlabel('Region')
-        plt.title(f'({seq[mode]}) {travel_mode[mode]}', y=-0.3)
-        plt.ylabel(f'Values of $z_r$ in {num_model} models')
-    plt.tight_layout()
-
-
-def Mode_in_Region_Plot_Stand_ave(qb_r_standard_50):
+def Mode_in_Region_Plot_Stand_ave(a):
     '''
     This function is used to plot the parameters of the random effect (average) in different years
     '''
     region_name = ['North\nEast', 'North\nWest', 'Yorkshire &\nthe Humber'
         , 'East\nMidlands', 'West\nMidlands', 'East of\nEngland', 'London', 'South\nEast', 'South\nWest']
+
     array_ave = np.zeros((len(travel_mode), len(years_str), len(region_name)))
     for year in range(len(years_str)):
         for mode in range(len(travel_mode)):
-            list1 = np.mean(qb_r_standard_50, axis=0)[year].T[mode]
+            list1 = np.mean(a, axis=0)[year].T[mode]
             array_ave[mode][year] = list1
 
     fig = plt.figure(dpi=300, figsize=(12, 10))
