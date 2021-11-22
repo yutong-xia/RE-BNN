@@ -1,6 +1,6 @@
 # Random Effect-Bayesian Neural Network (RE-BNN)
 
-TensorFlow code for my master dissertation at CASA, UCL.
+TensorFlow code for our paper.
 
 
 
