@@ -1,6 +1,6 @@
 # Random Effect-Bayesian Neural Network (RE-BNN)
 
-TensorFlow code for our paper **A Random Effect Bayesian Neural Network (RE-BNN) for Travel Mode Choice Analysis Across Multiple Regions**.
+Code for our paper **A Random Effect Bayesian Neural Network (RE-BNN) for Travel Mode Choice Analysis Across Multiple Regions**.
 
 
 
