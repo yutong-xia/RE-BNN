@@ -22,7 +22,7 @@ newname_col_indi = ['IndividualID', 'Individual_age', 'Individual_employment', '
 useful_col_psu = ['PSUID', 'SurveyYear']
 newname_col_psu = ['PSUID', 'Year']
 
-def data_clean(data_trip, data_hous,data_indi,data_psu,standard=True,statistics=False):
+def data_clean(data_trip, data_hous,data_indi,data_psu,statistics=False):
     data_trip_new = data_trip[useful_col_trip].rename(columns=dict(zip(useful_col_trip, newname_col_trip)))
     data_hous_new = data_hous[useful_col_hous].rename(columns=dict(zip(useful_col_hous, newname_col_hous)))
     data_indi_new = data_indi[useful_col_indi].rename(columns=dict(zip(useful_col_indi, newname_col_indi)))
@@ -93,18 +93,18 @@ def data_clean(data_trip, data_hous,data_indi,data_psu,standard=True,statistics=
     data.Individual_income.replace(dict(zip(cat_income, num_income)), inplace=True)
 
     ###################################### standardisation ###########################################
-    if standard == True:
-        standard_vars = ['Trip_distance', 'Trip_time', 'Household_employeed',
-                     'Household_children', 'Household_bike', 'Household_car',
-                     'Household_licence', 'Individual_age', 'Individual_income',
-                     'Population_density']
-        non_standard_vars = ['index', 'IndividualID', 'HouseholdID', 'Mode', 'Trip_purpose', 'Household_region',
-                         'Household_settlement', 'Individual_employment', 'Individual_education', 'Individual_gender',
-                         'Year']
+    
+    standard_vars = ['Trip_distance', 'Trip_time', 'Household_employeed',
+                    'Household_children', 'Household_bike', 'Household_car',
+                    'Household_licence', 'Individual_age', 'Individual_income',
+                    'Population_density']
+    non_standard_vars = ['index', 'IndividualID', 'HouseholdID', 'Mode', 'Trip_purpose', 'Household_region',
+                        'Household_settlement', 'Individual_employment', 'Individual_education', 'Individual_gender',
+                        'Year']
 
-        df_stand_part = pd.DataFrame(StandardScaler().fit_transform(data[standard_vars]), columns=standard_vars,
-                                 index=data.index)
-        data = pd.concat([data[non_standard_vars], df_stand_part], axis=1)
+    df_stand_part = pd.DataFrame(StandardScaler().fit_transform(data[standard_vars]), columns=standard_vars,
+                                index=data.index)
+    data = pd.concat([data[non_standard_vars], df_stand_part], axis=1)
 
     ###################################### get dummies of other catagorical variables  #####################################
     dummy_variable = ['Trip_purpose', 'Household_settlement', 'Individual_employment', 'Individual_education',
