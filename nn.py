@@ -5,6 +5,10 @@ import pandas as pd
 from edward.models import Normal, OneHotCategorical
 import statsmodels.api as sm
 import plot
+from util import config
+
+
+vars = config['experiments']['variables']
 
 activation1 = tf.tanh
 #activation1 = tf.nn.relu
@@ -14,18 +18,19 @@ n_hidden=15
 n_iter=1000
 batch_size=8
 
-def get_vars():
-    fixed_effect = ['Trip_distance', 'Trip_time', 'Household_employeed',
-       'Household_children', 'Household_bike', 'Household_car',
-       'Household_licence', 'Individual_age', 'Individual_income',
-       'Population_density', 'Trip_purpose_1', 'Trip_purpose_2',
-       'Trip_purpose_3', 'Trip_purpose_4', 'Trip_purpose_5', 'Trip_purpose_6',
-        'Household_settlement_1',
-      # 'Individual_employment_1',
-       'Individual_education_1',
-       'Individual_gender_1'
-                ]
-    return fixed_effect
+
+# def get_vars():
+#     fixed_effect = ['Trip_distance', 'Trip_time', 'Household_employeed',
+#        'Household_children', 'Household_bike', 'Household_car',
+#        'Household_licence', 'Individual_age', 'Individual_income',
+#        'Population_density', 'Trip_purpose_1', 'Trip_purpose_2',
+#        'Trip_purpose_3', 'Trip_purpose_4', 'Trip_purpose_5', 'Trip_purpose_6',
+#         'Household_settlement_1',
+#       # 'Individual_employment_1',
+#        'Individual_education_1',
+#        'Individual_gender_1'
+#                 ]
+#     return fixed_effect
 
 
 def train_test_index(data):
@@ -39,7 +44,7 @@ def REBNN_MODEL(data,name,n_hidden=n_hidden,learning_rate=learning_rate,test=Fal
     random_effect = data['Household_region'].astype('category').cat.codes
     train_index,test_index=train_test_index(data)
 
-    fixed_effect = get_vars()
+    fixed_effect = vars
     fixed_effect.remove('Population_density')
 
     X = data[fixed_effect].values
@@ -172,7 +177,7 @@ def REBNN_MODEL(data,name,n_hidden=n_hidden,learning_rate=learning_rate,test=Fal
 def BNN_MODEL(data, name):
     print(f'Start training BNN{name}.')
     train_index,test_index=train_test_index(data)
-    fixed_effect = get_vars()
+    fixed_effect = vars
     X = data[fixed_effect].values
     y = pd.get_dummies(data['Mode'], prefix='Mode').values
     y = y.astype(int)
@@ -328,7 +333,7 @@ def REDNN_MODEL(data,name,n_hidden=10,learning_rate=0.01,batch_size=100):
     print(f'Start training DNN for {name}')
     random_effect = data['Household_region'].astype('category').cat.codes
     train_index,test_index=train_test_index(data)
-    fixed_effect = get_vars()
+    fixed_effect = vars
     fixed_effect.remove('Population_density')
     X = data[fixed_effect].values
     y = pd.get_dummies(data['Mode'], prefix='Mode').values
@@ -407,11 +412,11 @@ def get_vars_MNL(data,var=1,print_detail=True):
     mode_name = plot.get_modes()
 
     vars_MNL=[]
-    corr = np.zeros((len(mode_name),len(get_vars())))
+    corr = np.zeros((len(mode_name),len(vars)))
     if print_detail==True:
         for i in range(len(data_mode)):
             data_corr=data_mode[i]
-            corr[i]=data_corr.drop(columns=['Mode_x','key_0']).corr()['Mode_y'].reindex(get_vars(),axis = 'rows').values
+            corr[i]=data_corr.drop(columns=['Mode_x','key_0']).corr()['Mode_y'].reindex(vars,axis = 'rows').values
             corr_col = data_corr.drop(columns=['Mode_x','key_0']).corr()['Mode_y'].abs().sort_values(ascending=False).head(10)
             print(f'Columns correlated with the alternatives {mode_name[i]}:')
             print(corr_col)
@@ -420,8 +425,8 @@ def get_vars_MNL(data,var=1,print_detail=True):
                 if corr_col[corr_col.index[j]]>0.1:data_1_col.append(corr_col.index[j])
             if len(data_1_col)<2:
                 data_1_col=list(corr_col.index[1:3])
-            if get_vars()[var] not in data_1_col:
-                data_1_col.append(get_vars()[var])
+            if vars[var] not in data_1_col:
+                data_1_col.append(vars[var])
             print(f'Columns selected in the utility function of {mode_name[i]}:')
             print(data_1_col)
             print(' ')
@@ -435,8 +440,8 @@ def get_vars_MNL(data,var=1,print_detail=True):
                 if corr_col[corr_col.index[j]] > 0.1: data_1_col.append(corr_col.index[j])
             if len(data_1_col) < 2:
                 data_1_col = list(corr_col.index[1:3])
-            if get_vars()[var] not in data_1_col:
-                data_1_col.append(get_vars()[var])
+            if vars[var] not in data_1_col:
+                data_1_col.append(vars[var])
             vars_MNL.append(data_1_col)
 
     return vars_MNL,corr.T

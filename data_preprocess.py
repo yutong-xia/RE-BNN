@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
+import os
+import pickle as pkl
 
 # trip
 useful_col_trip = ['TripID', 'IndividualID', 'HouseholdID', 'JD', 'MainMode_B04ID', 'TripPurpose_B04ID', 'TripTravTime',
@@ -22,7 +24,7 @@ newname_col_indi = ['IndividualID', 'Individual_age', 'Individual_employment', '
 useful_col_psu = ['PSUID', 'SurveyYear']
 newname_col_psu = ['PSUID', 'Year']
 
-def data_clean(data_trip, data_hous,data_indi,data_psu,statistics=False):
+def data_clean(data_trip, data_hous,data_indi,data_psu,standard=True,statistics=False):
     data_trip_new = data_trip[useful_col_trip].rename(columns=dict(zip(useful_col_trip, newname_col_trip)))
     data_hous_new = data_hous[useful_col_hous].rename(columns=dict(zip(useful_col_hous, newname_col_hous)))
     data_indi_new = data_indi[useful_col_indi].rename(columns=dict(zip(useful_col_indi, newname_col_indi)))
@@ -72,15 +74,17 @@ def data_clean(data_trip, data_hous,data_indi,data_psu,statistics=False):
     data.Population_density.replace(dict(zip(region_number, pop_density)), inplace=True)
 
     if statistics==True:
+        if not os.path.exists('./summary statistics'):
+            os.makedirs('./summary statistics')
         # summary statistics of the dataset
         num_vars = ['Trip_distance', 'Trip_time', 'Household_children', 'Household_bike', 'Household_car',
                     'Household_licence', 'Population_density']
         cat_vars = ['Mode', 'Trip_purpose', 'Individual_age', 'Individual_income', 'Household_employeed',
                     'Household_region', 'Household_settlement', 'Individual_employment', 'Individual_education',
                     'Individual_gender', 'Year']
-        data[num_vars].describe().to_csv('summary statistics\\num.csv')
+        data[num_vars].describe().to_csv('./summary statistics/num.csv')
         for i in range(len(cat_vars)):
-            data[cat_vars[i]].value_counts().to_csv(f'summary statistics\\cat_{cat_vars[i]}.csv')
+            data[cat_vars[i]].value_counts().to_csv(f'./summary statistics/cat_{cat_vars[i]}.csv')
         print('Summary statistics of variables have been saved in summary statistics folder.')
     ####################################### encode some categorical variable to numerical values #################
     # age
@@ -93,18 +97,18 @@ def data_clean(data_trip, data_hous,data_indi,data_psu,statistics=False):
     data.Individual_income.replace(dict(zip(cat_income, num_income)), inplace=True)
 
     ###################################### standardisation ###########################################
-    
-    standard_vars = ['Trip_distance', 'Trip_time', 'Household_employeed',
-                    'Household_children', 'Household_bike', 'Household_car',
-                    'Household_licence', 'Individual_age', 'Individual_income',
-                    'Population_density']
-    non_standard_vars = ['index', 'IndividualID', 'HouseholdID', 'Mode', 'Trip_purpose', 'Household_region',
-                        'Household_settlement', 'Individual_employment', 'Individual_education', 'Individual_gender',
-                        'Year']
+    if standard==True:
+        standard_vars = ['Trip_distance', 'Trip_time', 'Household_employeed',
+                        'Household_children', 'Household_bike', 'Household_car',
+                        'Household_licence', 'Individual_age', 'Individual_income',
+                        'Population_density']
+        non_standard_vars = ['index', 'IndividualID', 'HouseholdID', 'Mode', 'Trip_purpose', 'Household_region',
+                            'Household_settlement', 'Individual_employment', 'Individual_education', 'Individual_gender',
+                            'Year']
 
-    df_stand_part = pd.DataFrame(StandardScaler().fit_transform(data[standard_vars]), columns=standard_vars,
-                                index=data.index)
-    data = pd.concat([data[non_standard_vars], df_stand_part], axis=1)
+        df_stand_part = pd.DataFrame(StandardScaler().fit_transform(data[standard_vars]), columns=standard_vars,
+                                    index=data.index)
+        data = pd.concat([data[non_standard_vars], df_stand_part], axis=1)
 
     ###################################### get dummies of other catagorical variables  #####################################
     dummy_variable = ['Trip_purpose', 'Household_settlement', 'Individual_employment', 'Individual_education',
@@ -118,10 +122,19 @@ def data_clean(data_trip, data_hous,data_indi,data_psu,statistics=False):
                  'Individual_gender_2']
     data.drop(columns=ref_level, inplace=True)
 
+    #sort by Mode
+    data.sort_values(by=['Mode'],inplace = True)
+    #reindex
+    data.reset_index(inplace = True)
+    #drop unuseful columns
+    data.drop(columns=['level_0','index'],inplace = True)
+
     if standard==True:
-        data.to_csv('data_stand.csv')
+        with open('./data/data_stand.pkl','wb') as f:  
+            pkl.dump(data,f)
     else:
-        data.to_csv('data_non_stand.csv')
+        with open('./data/data_non_stand.pkl','wb') as f:  
+            pkl.dump(data,f)
     print(f'Done. The sample size is: {len(data)}')
 
 

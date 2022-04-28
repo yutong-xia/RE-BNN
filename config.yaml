@@ -1,0 +1,36 @@
+---
+experiments:
+  years: ['2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016']
+  region: ['North East', 'North West', 'Yorkshire and the Humber'
+        , 'East Midlands', 'West Midlands', 'East of England', 'London', 'South East', 'South West']
+  mode: ['Walk','Bicycle','Driving','Bus','Rail']
+  variables: ['Trip_distance', 'Trip_time', 'Household_employeed',
+       'Household_children', 'Household_bike', 'Household_car',
+       'Household_licence', 'Individual_age', 'Individual_income',
+       'Population_density', 'Trip_purpose_1', 'Trip_purpose_2',
+       'Trip_purpose_3', 'Trip_purpose_4', 'Trip_purpose_5', 'Trip_purpose_6',
+        'Household_settlement_1',
+      # 'Individual_employment_1',
+       'Individual_education_1',
+       'Individual_gender_1'
+                ]
+
+
+train:
+  batch_size: 16
+  epochs: 50
+  exp_repeat: 1
+  hist_len: 1
+  pred_len: 12
+  weight_decay: 0.00005
+  early_stop: 10
+  lr: 0.0005
+  e_h: 64
+  e_out: 60
+
+# filepath:
+#   'schwarzhorn.d2.comp.nus.edu.sg':
+#     knowair_fp : ./data/dataset.npy
+#     results_dir: ./results
+
+
