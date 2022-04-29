@@ -4,6 +4,7 @@ import pandas as pd
 import nn
 import statsmodels.api as sm
 import plot
+import pickle as pkl
 
 
 years_str = plot.get_years()
@@ -153,13 +154,12 @@ def dataset_year(year=2016,stand=True):
     :return: a dataframe
     '''
     if stand==True:
-        data=pd.read_csv('data_stand.csv')
-    else:
-        data=pd.read_csv('data_non_stand.csv')
+        with open('./data/data_stand.pkl','rb') as f:  
+            data=pkl.load(f)
 
-    data.sort_values(by=['Mode'],inplace = True)
-    data.reset_index(inplace = True)
-    data.drop(columns=['level_0', 'Unnamed: 0','index'],inplace = True)
+    else:
+        with open('./data/data_non_stand.pkl','rb') as f:  
+            data=pkl.load(f)
 
     data_year = data[data.Year == year].sort_values(by=['Mode', 'Household_region']).reset_index(drop=True)
 
@@ -243,22 +243,22 @@ def training_result_rebnn():
     qb_r_standard_50 = dict.fromkeys(range(50))
 
     for _ in range(50):
-        accuracy_rebnn_50[_] = pd.read_csv(f'results\\rebnn\\train{_ + 1}\\accuracy_rebnn.csv', index_col=0).values.T
+        accuracy_rebnn_50[_] = pd.read_csv(f'./results/rebnn/train{_ + 1}/accuracy_rebnn.csv', index_col=0).values.T
         prob_rebnn_pre_50[_] = dict.fromkeys(years_str)
         prob_rebnn_true_50[_] = dict.fromkeys(years_str)
         result_para_rebnn_50[_] = dict.fromkeys(years_str)
         qb_r_standard_50[_] = []
         for i in range(len(years_str)):
             prob_rebnn_pre_50[_][years_str[i]] = pd.read_csv(
-                f'results\\rebnn\\train{_ + 1}\\prob_rebnn_pre{years_str[i]}.csv', index_col=0).values
+                f'./results/rebnn/train{_ + 1}/prob_rebnn_pre{years_str[i]}.csv', index_col=0).values
             prob_rebnn_true_50[_][years_str[i]] = pd.read_csv(
-                f'results\\rebnn\\train{_ + 1}\\prob_rebnn_true{years_str[i]}.csv', index_col=0).values
+                f'./results/rebnn/train{_ + 1}/prob_rebnn_true{years_str[i]}.csv', index_col=0).values
             result_para_rebnn_50[_][years_str[i]] = dict.fromkeys(range(5))
             for j in range(5):
-                list2 = pd.read_csv(f'results\\rebnn\\train{_ + 1}\\result_para_rebnn{i}{j}.csv', index_col=0).values
+                list2 = pd.read_csv(f'./results/rebnn/train{_ + 1}/result_para_rebnn{i}{j}.csv', index_col=0).values
                 result_para_rebnn_50[_][years_str[i]][j] = list2
             qb_r_standard_50[_].append(
-                pd.read_csv(f'results\\rebnn\\train{_ + 1}\\qb_r_standard{years_str[i]}.csv', index_col=0).values)
+                pd.read_csv(f'./results/rebnn/train{_ + 1}/qb_r_standard{years_str[i]}.csv', index_col=0).values)
 
     return [accuracy_rebnn_50,prob_rebnn_pre_50,prob_rebnn_true_50,result_para_rebnn_50 ,qb_r_standard_50]
 
@@ -274,15 +274,15 @@ def training_result_bnn():
     result_para_bnn_50 = dict.fromkeys(range(50))
 
     for _ in range(50):
-        accuracy_bnn_50[_] = pd.read_csv(f'results\\bnn\\train{_ + 1}\\accuracy_bnn.csv', index_col=0).values.T
+        accuracy_bnn_50[_] = pd.read_csv(f'./results/bnn/train{_ + 1}/accuracy_bnn.csv', index_col=0).values.T
         prob_bnn_pre_50[_] = dict.fromkeys(years_str)
         result_para_bnn_50[_] = dict.fromkeys(years_str)
         for i in range(len(years_str)):
-            prob_bnn_pre_50[_][years_str[i]] = pd.read_csv(f'results\\bnn\\train{_ + 1}\\prob_bnn_pre{years_str[i]}.csv',
+            prob_bnn_pre_50[_][years_str[i]] = pd.read_csv(f'./results/bnn/train{_ + 1}/prob_bnn_pre{years_str[i]}.csv',
                                                            index_col=0).values
             result_para_bnn_50[_][years_str[i]] = dict.fromkeys(range(5))
             for j in range(4):
-                list2 = pd.read_csv(f'results\\bnn\\train{_ + 1}\\result_para_bnn{i}{j}.csv', index_col=0).values
+                list2 = pd.read_csv(f'./results/bnn/train{_ + 1}/result_para_bnn{i}{j}.csv', index_col=0).values
                 result_para_bnn_50[_][years_str[i]][j] = list2
 
     return [accuracy_bnn_50,prob_bnn_pre_50,result_para_bnn_50]
@@ -299,21 +299,21 @@ def training_result_dnn():
     result_para_dnn_50 = dict.fromkeys(range(50))
 
     for _ in range(50):
-        accuracy_dnn_50[_] = pd.read_csv(f'results\\dnn\\train{_ + 1}\\accuracy_dnn.csv', index_col=0).values.T
+        accuracy_dnn_50[_] = pd.read_csv(f'./results/dnn/train{_ + 1}/accuracy_dnn.csv', index_col=0).values.T
         prob_dnn_pre_50[_] = dict.fromkeys(years_str)
         result_para_dnn_50[_] = dict.fromkeys(years_str)
         for i in range(len(years_str)):
-            prob_dnn_pre_50[_][years_str[i]] = pd.read_csv(f'results\\dnn\\train{_ + 1}\\prob_dnn_pre{years_str[i]}.csv',
+            prob_dnn_pre_50[_][years_str[i]] = pd.read_csv(f'results/dnn/train{_ + 1}/prob_dnn_pre{years_str[i]}.csv',
                                                            index_col=0).values
             result_para_dnn_50[_][years_str[i]] = dict.fromkeys(range(5))
             for j in range(4):
-                list2 = pd.read_csv(f'results\\dnn\\train{_ + 1}\\result_para_dnn{i}{j}.csv', index_col=0).values
+                list2 = pd.read_csv(f'./results/dnn/train{_ + 1}/result_para_dnn{i}{j}.csv', index_col=0).values
                 result_para_dnn_50[_][years_str[i]][j] = list2
     return [accuracy_dnn_50,prob_dnn_pre_50,result_para_dnn_50]
 
 def training_result_mnl():
 
-    accuracy_mnl=pd.read_csv('results\\mnl\\accuracy_mnl.csv',index_col=0).values
+    accuracy_mnl=pd.read_csv('./results/mnl/accuracy_mnl.csv',index_col=0).values
     prob_mnl_pre=dict.fromkeys(years_str)
     mnl_col=[['Household_car', 'Trip_distance', 'Household_licence', 'Trip_time'],
      ['Household_bike', 'Trip_purpose_1', 'Trip_time'],
@@ -331,6 +331,6 @@ def training_result_mnl():
       'Individual_education_1']]
 
     for i in range(len(years_str)):
-        prob_mnl_pre[years_str[i]]=pd.read_csv(f'results\\mnl\\prob_mnl_pre{years_str[i]}.csv',index_col=0).values
+        prob_mnl_pre[years_str[i]]=pd.read_csv(f'./results/mnl/prob_mnl_pre{years_str[i]}.csv',index_col=0).values
 
     return [accuracy_mnl,prob_mnl_pre,mnl_col]
