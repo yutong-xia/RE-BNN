@@ -32,7 +32,7 @@ def biogeme_mnl(data2016,year='2016'):
     B_walk_licence = exp.Beta('B_walk_licence', 0, None, None, 0)
     B_wlak_time = exp.Beta('B_wlak_time', 0, None, None, 0)
 
-    A_bike = exp.Beta('A_bike ', 0, None, None, 1)
+    A_bike = exp.Beta('A_bike ', 1, None, None, 1)
     B_bike_bikes = exp.Beta('B_bike_bikes', 0, None, None, 0)
     B_bike_purpose1 = exp.Beta('B_bike_purpose1', 0, None, None, 0)
     B_bike_time = exp.Beta('B_bike_time ', 0, None, None, 0)
@@ -103,6 +103,7 @@ def biogeme_mnl(data2016,year='2016'):
           5:AV
     }
 
+
     # Define the model
     logprob = models.loglogit(V, av, Mode)
 
@@ -152,4 +153,4 @@ def biogeme_mnl(data2016,year='2016'):
 
     accuracy = np.diagonal(confusion_matrix.to_numpy()).sum() / confusion_matrix.to_numpy().sum()
 
-    return accuracy
+    return accuracy, simulatedValues

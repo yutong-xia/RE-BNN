@@ -5,11 +5,12 @@ import nn
 import statsmodels.api as sm
 import plot
 import pickle as pkl
+from util import config
 
-
-years_str = plot.get_years()
-travel_mode = plot.get_modes()
-region_name=plot.get_region()
+years_str=config['experiments']['years']
+region_name =config['experiments']['region']
+travel_mode = config['experiments']['mode']
+fixed_effect = config['experiments']['variables']
 
 def acc_region(data_year, prob_rebnn_pre,prob_rebnn_true):
     '''
@@ -311,9 +312,9 @@ def training_result_dnn():
                 result_para_dnn_50[_][years_str[i]][j] = list2
     return [accuracy_dnn_50,prob_dnn_pre_50,result_para_dnn_50]
 
-def training_result_mnl():
+def training_result_mnl_mixed(model='mnl'):
 
-    accuracy_mnl=pd.read_csv('./results/mnl/accuracy_mnl.csv',index_col=0).values
+    accuracy_mnl=pd.read_csv(f'./results/{model}/accuracy_{model}.csv',index_col=0).values
     prob_mnl_pre=dict.fromkeys(years_str)
     mnl_col=[['Household_car', 'Trip_distance', 'Household_licence', 'Trip_time'],
      ['Household_bike', 'Trip_purpose_1', 'Trip_time'],
@@ -331,6 +332,7 @@ def training_result_mnl():
       'Individual_education_1']]
 
     for i in range(len(years_str)):
-        prob_mnl_pre[years_str[i]]=pd.read_csv(f'./results/mnl/prob_mnl_pre{years_str[i]}.csv',index_col=0).values
+        prob_mnl_pre[years_str[i]]=pd.read_csv(f'./results/{model}/prob_{model}_pre{years_str[i]}.csv',index_col=0).values
 
     return [accuracy_mnl,prob_mnl_pre,mnl_col]
+
