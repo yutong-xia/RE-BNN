@@ -1,11 +1,6 @@
 /data/
 /results/
 /notebook/
-/Test*
+/summary*/
 /mixed*
 
-/mnl_mode_variables_select.py
-
-
-
-/biogeme*

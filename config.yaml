@@ -16,21 +16,5 @@ experiments:
                 ]
 
 
-train:
-  batch_size: 16
-  epochs: 50
-  exp_repeat: 1
-  hist_len: 1
-  pred_len: 12
-  weight_decay: 0.00005
-  early_stop: 10
-  lr: 0.0005
-  e_h: 64
-  e_out: 60
-
-# filepath:
-#   'schwarzhorn.d2.comp.nus.edu.sg':
-#     knowair_fp : ./data/dataset.npy
-#     results_dir: ./results
 
 

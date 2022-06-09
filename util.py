@@ -11,12 +11,6 @@ with open(conf_fp) as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
 
 
-# nodename = os.uname().nodename
-# nodename = 'schwarzhorn.d2.comp.nus.edu.sg'
-# file_dir = config['filepath'][nodename]
-
-# file_dir = 'ssh://yutong@schwarzhorn.d2.comp.nus.edu.sg:/home/yutong/'
-
 def main():
     pass
 
