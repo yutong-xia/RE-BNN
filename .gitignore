@@ -1,10 +1,11 @@
 /data/
 /results/
 /notebook/
+/Test*
 /mixed*
 
 /mnl_mode_variables_select.py
 
-/Test biogeme.ipynb
+
 
 /biogeme*
